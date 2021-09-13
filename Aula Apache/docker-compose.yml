@@ -1,0 +1,36 @@
+version: '3.8'
+
+networks:
+    laravel:
+        name: laravel
+
+services:   
+    apache:
+        build:
+            context: .
+            dockerfile: apache.dockerfile
+        container_name: apache
+        ports: 
+            - 80:80
+            - 443:443
+        volumes:
+            - ./src:/var/www/html
+        networks:
+            - laravel
+
+    php:
+        image: php:7.4.12-fpm-alpine 
+        container_name: php
+        networks:
+            - laravel
+
+    mysql:
+        image: mysql:5.7.32
+        container_name: mysql
+        environment:
+            MYSQL_DATABASE: laraveldb
+            MYSQL_USER: laravel
+            MYSQL_PASSWORD: secret
+            MYSQL_ROOT_PASSWORD: secret
+        networks:
+            - laravel
